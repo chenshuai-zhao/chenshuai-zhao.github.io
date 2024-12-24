@@ -4,10 +4,14 @@
 		<meta charset="utf-8">
 		<title></title>
 		<link rel="stylesheet" href="bootstrap-4.6.2/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/json-formatter-js/dist/json-formatter.min.css">
+		
 		<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 		<script src="bootstrap-4.6.2/js/bootstrap.bundle.min.js"></script>
 		<script src="js/tools.js"></script>
-		<script src="js/lsof.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/json-formatter-js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jsonlint@1.6.3/lib/jsonlint.min.js"></script>
+		
 
 	</head>
 	<body>
@@ -25,6 +29,11 @@
 				<li class="nav-item" role="presentation">
 					<button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact"
 						type="button" role="tab" aria-controls="pills-contact" aria-selected="false">拼接引号</button>
+				</li>
+				
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-json"
+						type="button" role="tab" aria-controls="pills-contact" aria-selected="false">JSON格式化</button>
 				</li>
 			</ul>
 			<div class="tab-content" id="pills-tabContent">
@@ -76,6 +85,25 @@
 						<div class="form-group">
 							<label for="addtxt2">拼接后</label>
 							<textarea class="form-control" id="addtxt2" rows="5"></textarea>
+						</div>
+						
+					</form>
+				</div>
+				
+				
+				
+				<div class="tab-pane fade" id="pills-json" role="tabpanel" aria-labelledby="pills-json-tab">
+					<form action="#">
+						<div class="form-group">
+							<label for="tojson1">原始</label>
+							<textarea class="form-control" id="json-input" rows="5">{"result":"通过","option":"意见内容"}</textarea>
+						</div>
+							<button type="input" class="btn btn-primary mr-2" onclick="formatJson()">格式化</button>
+							<button type="input" class="btn btn-success mr-2" onclick="tojson()">格式化+高亮</button>
+							
+						<div class="form-group">
+							<label for="formatted-json">拼接后</label>
+							<pre id="formatted-json"></pre>
 						</div>
 						
 					</form>
