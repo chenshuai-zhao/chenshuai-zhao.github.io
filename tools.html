@@ -97,12 +97,13 @@
 					<form action="#">
 						<div class="form-group">
 							<label for="tojson1">原始</label>
-							<textarea class="form-control" id="json-input"
+							<textarea onblur="countKB()" class="form-control" id="json-input"
 								rows="5">{"result":"通过","option":"意见内容"}</textarea>
 						</div>
 						<button type="input" class="btn btn-primary mr-2" onclick="formatJson()">格式化</button>
 						<button type="input" class="btn btn-success mr-2" onclick="tojson()">格式化+高亮</button>
 
+						<p id="output"></p>
 						<div class="form-group">
 							<label for="formatted-json">格式化后</label>
 							<pre id="formatted-json"></pre>
