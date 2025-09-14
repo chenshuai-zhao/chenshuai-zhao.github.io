@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>图钉效果示例</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            height: 2000px; /* 仅用于演示滚动 */
+            background: #f4f4f4;
+        }
+        .pin {
+            position: fixed;
+            top: 10px; /* 距离顶部的距离 */
+            right: 10px; /* 距离右侧的距离 */
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            z-index: 1000; /* 确保它在其他内容之上 */
+        }
+    </style>
+</head>
+<body>
+    <div class="pin">
+        我是图钉元素<br>
+        滚动页面我依然在这里！
+    </div>
+
+    <div class="content">
+        <h1>页面内容</h1>
+        <p>向下滚动以查看图钉效果。</p>
+    </div>
+</body>
+</html>

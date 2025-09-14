@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viselect 示例</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/selection-js/dist/selection.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="item">元素 1</div>
+        <div class="item">元素 2</div>
+        <div class="item">元素 3</div>
+        <!-- 更多元素 -->
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/selection-js/dist/selection.min.js"></script>
+    <script>
+        const selection = new Selection({
+            container: '.container',
+            item: '.item',
+            // 其他配置项
+        });
+
+        selection.on('change', (items) => {
+            console.log('选中的元素：', items);
+        });
+    </script>
+</body>
+</html>

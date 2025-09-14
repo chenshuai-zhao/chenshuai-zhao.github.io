@@ -1,119 +1,527 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<title></title>
-		<link rel="stylesheet" href="bootstrap-4.6.2/css/bootstrap.min.css" />
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/json-formatter-js/dist/json-formatter.min.css">
 
-		<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-		<script src="bootstrap-4.6.2/js/bootstrap.bundle.min.js"></script>
-		<script src="js/tools.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/json-formatter-js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/jsonlint@1.6.3/lib/jsonlint.min.js"></script>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title></title>
+	<link rel="stylesheet" href="bootstrap-4.6.2/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="vendor/json-formatter-js/json-formatter.min.css">
 
-
-	</head>
-	<body>
-		<div class="container">
-			<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-				<li class="nav-item" role="presentation">
-					<button class="nav-link " id="pills-home-tab" data-toggle="pill" data-target="#pills-home"
-						type="button" role="tab" aria-controls="pills-home" aria-selected="true">生成UUID</button>
-				</li>
-				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="pills-profile-tab" data-toggle="pill"
-						data-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-						aria-selected="false">大小写转换</button>
-				</li>
-				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact"
-						type="button" role="tab" aria-controls="pills-contact" aria-selected="false">拼接引号</button>
-				</li>
-
-				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-json"
-						type="button" role="tab" aria-controls="pills-contact" aria-selected="false">JSON格式化</button>
-				</li>
-			</ul>
-			<div class="tab-content" id="pills-tabContent">
-				<div class="tab-pane fade " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-					<form action="#">
-						<div class="form-group">
-							<label for="exampleFormControlInput1">数量</label>
-							<input type="number" class="form-control small" id="exampleFormControlInput1" value="1"
-								placeholder="1">
-						</div>
-						<div class="form-group">
-							<label for="exampleFormControlTextarea1">结果</label>
-							<textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
-						</div>
-
-						<button type="input" class="btn btn-primary mr-2" onclick="generator()">生成</button>
-						<button type="input" class="btn btn-success mr-2" onclick="copyToClipboardModern()">复制</button>
-						<button type="input" class="btn btn-danger mr-2" onclick="removeStr()">去除-</button>
-						<button type="input" class="btn btn-warning mr-2" onclick="clean()">清空</button>
-					</form>
-				</div>
-				<div class="tab-pane fade show active" id="pills-profile" role="tabpanel"
-					aria-labelledby="pills-profile-tab">
-					<form action="#">
-						<div class="form-group">
-							<label for="upperLowerL1">原始</label>
-							<textarea class="form-control" id="upperLowerL1" rows="5"></textarea>
-						</div>
-						<div class="form-group">
-							<label for="upperLowerL2">结果</label>
-							<textarea class="form-control" id="upperLowerL2" rows="5"></textarea>
-						</div>
-						<div class="align-self-center">
-							<button type="input" class="btn btn-primary mr-2" onclick="toUpper()">转换为大写</button>
-							<button type="input" class="btn btn-primary mr-2" onclick="toFirstUpper()">首字母大写</button>
-							<button type="input" class="btn btn-success mr-2" onclick="toLower()">转换为小写</button>
-						</div>
-					</form>
-				</div>
-				<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-					<form action="#">
-						<div class="form-group">
-							<label for="addtxt1">原始</label>
-							<textarea class="form-control" id="addtxt1" rows="5"></textarea>
-						</div>
-						<button type="input" class="btn btn-primary mr-2" onclick="addtxt(1)">拼接单引号</button>
-						<button type="input" class="btn btn-danger mr-2" onclick="addtxt(2)">拼接双引号</button>
-						<button type="input" class="btn btn-success mr-2" onclick="addtxt(3)">不拼接</button>
-						<div class="form-group">
-							<label for="addtxt2">拼接后</label>
-							<textarea class="form-control" id="addtxt2" rows="5"></textarea>
-						</div>
-
-					</form>
-				</div>
+	<script src="vendor/jquery/jquery.slim.min.js"></script>
+	<script src="bootstrap-4.6.2/js/bootstrap.bundle.min.js"></script>
+	<script src="vendor/crypto-js/crypto-js.min.js"></script>
+	<script src="vendor/bcryptjs.min.js"></script>
+	<script src="js/tools.js"></script>
+	<script src="vendor/json-formatter-js/json-formatter.min.js"></script>
+	<script src="vendor/jsonlint/jsonlint.min.js"></script>
 
 
+</head>
 
-				<div class="tab-pane fade" id="pills-json" role="tabpanel" aria-labelledby="pills-json-tab">
-					<form action="#">
-						<div class="form-group">
-							<label for="tojson1">原始</label>
-							<textarea onblur="countKB()" class="form-control" id="json-input"
-								rows="5">{"result":"通过","option":"意见内容"}</textarea>
-						</div>
-						<button type="input" class="btn btn-primary mr-2" onclick="formatJson()">格式化</button>
-						<button type="input" class="btn btn-success mr-2" onclick="tojson()">格式化+高亮</button>
+<body style="min-height: 100vh;">
+	<div class="container">
+		<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link " id="pills-home-tab" data-toggle="pill" data-target="#pills-home" type="button"
+					role="tab" aria-controls="pills-home" aria-selected="true">生成UUID</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="pills-profile-tab" data-toggle="pill" data-target="#pills-profile"
+					type="button" role="tab" aria-controls="pills-profile" aria-selected="false">大小写转换</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact"
+					type="button" role="tab" aria-controls="pills-contact" aria-selected="false">拼接引号</button>
+			</li>
 
-						<p id="output"></p>
-						<div class="form-group">
-							<label for="formatted-json">格式化后</label>
-							<pre id="formatted-json"></pre>
-						</div>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-json"
+					type="button" role="tab" aria-controls="pills-contact" aria-selected="false">JSON格式化</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-url-tab" data-toggle="pill" data-target="#pills-url" type="button"
+					role="tab" aria-controls="pills-url" aria-selected="false">URL编解码</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-escape-tab" data-toggle="pill" data-target="#pills-escape"
+					type="button" role="tab" aria-controls="pills-escape" aria-selected="false">去除转义</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-merge-tab" data-toggle="pill" data-target="#pills-merge"
+					type="button" role="tab" aria-controls="pills-merge" aria-selected="false">合并行</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-size-tab" data-toggle="pill" data-target="#pills-size" type="button"
+					role="tab" aria-controls="pills-size" aria-selected="false">字节大小</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-base64-tab" data-toggle="pill" data-target="#pills-base64" type="button"
+					role="tab" aria-controls="pills-base64" aria-selected="false">Base64编解码</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-timestamp-tab" data-toggle="pill" data-target="#pills-timestamp" type="button"
+					role="tab" aria-controls="pills-timestamp" aria-selected="false">时间戳转换</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-vscode-tab" data-toggle="pill" data-target="#pills-vscode" type="button"
+					role="tab" aria-controls="pills-vscode" aria-selected="false">VSCode调用</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-password-tab" data-toggle="pill" data-target="#pills-password" type="button"
+					role="tab" aria-controls="pills-password" aria-selected="false">随机密码</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-jwt-tab" data-toggle="pill" data-target="#pills-jwt" type="button"
+					role="tab" aria-controls="pills-jwt" aria-selected="false">JWT解析</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-aes-tab" data-toggle="pill" data-target="#pills-aes" type="button"
+					role="tab" aria-controls="pills-aes" aria-selected="false">AES加密解密</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-bcrypt-tab" data-toggle="pill" data-target="#pills-bcrypt" type="button"
+					role="tab" aria-controls="pills-bcrypt" aria-selected="false">BCrypt加密</button>
+			</li>
+		</ul>
 
-					</form>
-				</div>
+		<div class="tab-content" id="pills-tabContent">
+
+			<div class="tab-pane fade " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+				<form action="#">
+					<div class="form-group">
+						<label for="exampleFormControlInput1">数量</label>
+						<input type="number" class="form-control small" id="exampleFormControlInput1" value="1"
+							placeholder="1">
+					</div>
+
+					<div class="form-group">
+						<label for="exampleFormControlTextarea1">结果</label>
+						<textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+					</div>
+
+
+					<button type="input" class="btn btn-primary mr-2" onclick="generator()">生成</button>
+					<button type="input" class="btn btn-success mr-2" onclick="copyToClipboardModern()">复制</button>
+					<button type="input" class="btn btn-danger mr-2" onclick="removeStr()">去除-</button>
+					<button type="input" class="btn btn-warning mr-2" onclick="clean()">清空</button>
+				</form>
 			</div>
+
+			<div class="tab-pane fade show active" id="pills-profile" role="tabpanel"
+				aria-labelledby="pills-profile-tab">
+				<form action="#">
+					<div class="form-group">
+						<label for="upperLowerL1">原始</label>
+						<textarea class="form-control" id="upperLowerL1" rows="5"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label for="upperLowerL2">结果</label>
+						<textarea class="form-control" id="upperLowerL2" rows="5"></textarea>
+					</div>
+
+					<div class="align-self-center">
+						<button type="input" class="btn btn-primary mr-2" onclick="toUpper()">转换为大写</button>
+						<button type="input" class="btn btn-primary mr-2" onclick="toFirstUpper()">首字母大写</button>
+						<button type="input" class="btn btn-success mr-2" onclick="toLower()">转换为小写</button>
+					</div>
+
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+				<form action="#">
+					<div class="form-group">
+						<label for="addtxt1">原始</label>
+						<textarea class="form-control" id="addtxt1" rows="5"></textarea>
+					</div>
+
+					<button type="input" class="btn btn-primary mr-2" onclick="addtxt(1)">拼接单引号</button>
+					<button type="input" class="btn btn-danger mr-2" onclick="addtxt(2)">拼接双引号</button>
+					<button type="input" class="btn btn-success mr-2" onclick="addtxt(3)">不拼接</button>
+					<div class="form-group">
+						<label for="addtxt2">拼接后</label>
+						<textarea class="form-control" id="addtxt2" rows="5"></textarea>
+					</div>
+
+
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-json" role="tabpanel" aria-labelledby="pills-json-tab">
+				<form action="#">
+					<div class="form-group">
+						<label for="tojson1">原始</label>
+						<textarea onblur="countKB()" class="form-control" id="json-input"
+							rows="5">{"result":"通过","option":"意见内容"}</textarea>
+					</div>
+
+					<button type="input" class="btn btn-primary mr-2" onclick="formatJson()">格式化</button>
+					<button type="input" class="btn btn-success mr-2" onclick="tojson()">格式化+高亮</button>
+
+					<p id="output"></p>
+					<div class="form-group">
+						<label for="formatted-json">格式化后</label>
+						<pre id="formatted-json"></pre>
+					</div>
+
+
+				</form>
+			</div>
+
+
+			<div class="tab-pane fade" id="pills-escape" role="tabpanel" aria-labelledby="pills-escape-tab">
+				<form action="#">
+					<div class="form-group">
+						<label for="escape-input">原始文本</label>
+						<textarea class="form-control" id="escape-input" rows="5"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label for="escape-output">结果</label>
+						<textarea class="form-control" id="escape-output" rows="5"></textarea>
+					</div>
+
+					<div class="align-self-center">
+						<button type="button" class="btn btn-primary mr-2" onclick="removeEscape()">去除转义</button>
+					</div>
+
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-url" role="tabpanel" aria-labelledby="pills-url-tab">
+				<form action="#">
+					<div class="form-group">
+						<label for="url-input">原始URL</label>
+						<textarea class="form-control" id="url-input" rows="5"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label for="url-output">结果</label>
+						<textarea class="form-control" id="url-output" rows="5"></textarea>
+					</div>
+
+					<div class="align-self-center">
+						<button type="button" class="btn btn-primary mr-2" onclick="encodeURL()">URL编码</button>
+						<button type="button" class="btn btn-success mr-2" onclick="decodeURL()">URL解码</button>
+					</div>
+
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-merge" role="tabpanel" aria-labelledby="pills-merge-tab">
+				<form action="#" class="card p-3">
+					<div class="form-group">
+						<label for="merge-input">原始文本</label>
+						<textarea class="form-control" id="merge-input" rows="5"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="merge-output">结果</label>
+						<textarea class="form-control" id="merge-output" rows="5"></textarea>
+					</div>
+					<div class="align-self-center">
+						<button type="button" class="btn btn-primary mr-2" onclick="mergeLines()">合并行</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-size" role="tabpanel" aria-labelledby="pills-size-tab">
+				<form action="#" class="card p-3">
+					<div class="form-group">
+						<label for="size-input">文本内容</label>
+						<textarea class="form-control" id="size-input" rows="5"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="size-output">字节大小</label>
+						<input type="text" class="form-control" id="size-output" readonly>
+					</div>
+					<div class="align-self-center">
+						<button type="button" class="btn btn-primary mr-2" onclick="calculateByteSize()">计算大小</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-base64" role="tabpanel" aria-labelledby="pills-base64-tab">
+				<form action="#" class="card p-3">
+					<div class="form-group">
+						<label for="base64-input">原始文本</label>
+						<textarea class="form-control" id="base64-input" rows="5"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="base64-output">结果</label>
+						<textarea class="form-control" id="base64-output" rows="5"></textarea>
+					</div>
+					<div class="align-self-center">
+						<button type="button" class="btn btn-primary mr-2" onclick="encodeBase64()">Base64编码</button>
+						<button type="button" class="btn btn-success mr-2" onclick="decodeBase64()">Base64解码</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-timestamp" role="tabpanel" aria-labelledby="pills-timestamp-tab">
+				<form action="#" class="card p-3">
+					<div class="form-group">
+						<label for="timestamp-input">时间戳(毫秒)</label>
+						<input type="text" class="form-control" id="timestamp-input" placeholder="1672531200000">
+					</div>
+					<div class="form-group">
+						<label for="datetime-input">日期时间</label>
+						<input type="datetime-local" class="form-control" id="datetime-input">
+					</div>
+					<div class="align-self-center">
+						<button type="button" class="btn btn-primary mr-2" onclick="timestampToDatetime()">时间戳→日期</button>
+						<button type="button" class="btn btn-success mr-2" onclick="datetimeToTimestamp()">日期→时间戳</button>
+						<button type="button" class="btn btn-warning mr-2" onclick="getCurrentTimestamp()">获取当前时间戳</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-vscode" role="tabpanel" aria-labelledby="pills-vscode-tab">
+				<form action="#" class="card p-3">
+					<div class="form-group">
+						<label for="vscode-path">文件路径</label>
+						<input type="text" class="form-control" id="vscode-path" placeholder="例如: /path/to/file.js">
+					</div>
+					<div class="form-group">
+						<label for="vscode-line">行号 (可选)</label>
+						<input type="number" class="form-control" id="vscode-line" placeholder="1" min="1">
+					</div>
+					<div class="form-group">
+						<label for="vscode-column">列号 (可选)</label>
+						<input type="number" class="form-control" id="vscode-column" placeholder="1" min="1">
+					</div>
+					<div class="align-self-center">
+						<a id="open-vscode-link" class="btn btn-primary mr-2" target="_blank">打开VSCode</a>
+						<button type="button" class="btn btn-success mr-2" onclick="setCurrentFilePath()">使用当前页面路径</button>
+						<button type="button" class="btn btn-warning mr-2" onclick="openCurrentToolFiles()">打开工具源码</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-password" role="tabpanel" aria-labelledby="pills-password-tab">
+				<form action="#" class="card p-3">
+					<div class="form-group">
+						<label for="password-length">密码长度</label>
+						<input type="number" class="form-control" id="password-length" min="6" max="100" value="12">
+					</div>
+					<div class="form-group">
+						<label>包含字符类型</label>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="include-uppercase" checked>
+							<label class="form-check-label" for="include-uppercase">大写字母 (A-Z)</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="include-lowercase" checked>
+							<label class="form-check-label" for="include-lowercase">小写字母 (a-z)</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="include-numbers" checked>
+							<label class="form-check-label" for="include-numbers">数字 (0-9)</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="include-special" checked>
+							<label class="form-check-label" for="include-special">特殊字符 (!@#$%^&*)</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="password-output">生成的密码</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="password-output" readonly>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-outline-secondary" onclick="copyToClipboard('password-output')">复制</button>
+							</div>
+						</div>
+					</div>
+					<div class="align-self-center">
+						<button type="button" class="btn btn-primary mr-2" onclick="generatePassword()">生成密码</button>
+						<button type="button" class="btn btn-secondary mr-2" onclick="resetPasswordOptions()">重置选项</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="tab-pane fade" id="pills-jwt" role="tabpanel" aria-labelledby="pills-jwt-tab">
+				<form action="#" class="card p-3">
+					<div class="form-group">
+						<label for="jwt-input">JWT Token</label>
+						<textarea class="form-control" id="jwt-input" rows="3" placeholder="请输入JWT Token..."></textarea>
+					</div>
+					<div class="form-group">
+						<div class="align-self-center">
+							<button type="button" class="btn btn-primary mr-2" onclick="parseJWT()">解析JWT</button>
+							<button type="button" class="btn btn-secondary mr-2" onclick="clearJWT()">清空</button>
+							<button type="button" class="btn btn-info mr-2" onclick="generateSampleJWT()">生成示例</button>
+						</div>
+					</div>
+					
+					<div class="form-group mt-4">
+						<h5>解析结果</h5>
+						
+						<div class="card mt-2">
+							<div class="card-header">
+								<span class="badge badge-info">Header</span>
+							</div>
+							<div class="card-body">
+								<pre id="jwt-header" class="bg-light p-2 rounded">{}</pre>
+							</div>
+						</div>
+						
+						<div class="card mt-2">
+							<div class="card-header">
+								<span class="badge badge-primary">Payload</span>
+							</div>
+							<div class="card-body">
+								<pre id="jwt-payload" class="bg-light p-2 rounded">{}</pre>
+							</div>
+						</div>
+						
+						<div class="card mt-2">
+							<div class="card-header">
+								<span class="badge badge-warning">Signature</span>
+							</div>
+							<div class="card-body">
+								<pre id="jwt-signature" class="bg-light p-2 rounded">无</pre>
+							</div>
+						</div>
+						
+						<div id="jwt-error" class="mt-2 alert alert-danger" style="display: none;">
+							错误信息将显示在这里
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<!-- AES加密解密工具 -->
+			<div class="tab-pane fade" id="pills-aes" role="tabpanel" aria-labelledby="pills-aes-tab">
+				<form class="mt-3">
+					<div class="form-group">
+						<label for="aes-key">密钥（16位字符）</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="aes-key" placeholder="请输入16位密钥" value="XX#@Portal&*...1">
+							<div class="input-group-append">
+								<button type="button" class="btn btn-secondary" onclick="generateRandomAESKey()">生成随机密钥</button>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="aes-input">输入内容</label>
+						<textarea class="form-control" id="aes-input" rows="4" placeholder="请输入要加密或解密的内容"></textarea>
+					</div>
+					
+					<div class="form-group">
+						<div class="btn-group mr-2">
+							<button type="button" class="btn btn-primary" onclick="encryptAES()">加密</button>
+							<button type="button" class="btn btn-secondary" onclick="decryptAES()">解密</button>
+							<button type="button" class="btn btn-danger" onclick="clearAES()">清空</button>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="aes-output">输出结果</label>
+						<div class="input-group">
+							<textarea class="form-control" id="aes-output" rows="4" placeholder="加密或解密后的结果将显示在这里" readonly></textarea>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-success" onclick="copyToClipboard('aes-output')">复制</button>
+							</div>
+						</div>
+					</div>
+					
+					<div id="aes-error" class="mt-2 alert alert-danger" style="display: none;">
+						错误信息将显示在这里
+					</div>
+				</form>
+			</div>
+
+			<!-- BCrypt加密工具内容 -->
+			<div class="tab-pane fade" id="pills-bcrypt" role="tabpanel" aria-labelledby="pills-bcrypt-tab">
+				<form>
+					<div class="form-group">
+						<label for="bcrypt-password">密码</label>
+						<input type="text" class="form-control" id="bcrypt-password" placeholder="请输入要加密的密码">
+					</div>
+					
+					<div class="form-group">
+						<label for="bcrypt-salt">盐值 (可选)</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="bcrypt-salt" placeholder="自动生成或手动输入盐值">
+							<div class="input-group-append">
+								<button type="button" class="btn btn-secondary" onclick="generateBCryptSalt()">生成盐值</button>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<div class="btn-group mr-2">
+							<button type="button" class="btn btn-primary" onclick="encryptBCrypt()">加密</button>
+							<button type="button" class="btn btn-info" onclick="checkBCrypt()">校验密码</button>
+							<button type="button" class="btn btn-danger" onclick="clearBCrypt()">清空</button>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="bcrypt-output">输出结果</label>
+						<div class="input-group">
+							<textarea class="form-control" id="bcrypt-output" rows="4" placeholder="BCrypt加密结果或校验结果将显示在这里" readonly></textarea>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-success" onclick="copyToClipboard('bcrypt-output')">复制</button>
+							</div>
+						</div>
+					</div>
+					
+					<div id="bcrypt-error" class="mt-2 alert alert-danger" style="display: none;">
+						错误信息将显示在这里
+					</div>
+				</form>
+			</div>
+
 		</div>
 
+	</div>
 
-	</body>
+
+
+	<script>
+
+	</script>
+	<style>
+		.heart {
+			position: absolute;
+			pointer-events: none;
+			transform: translate(-50%, -50%);
+			font-size: 20px;
+			color: #ff4081;
+			animation: float 2s ease-out forwards;
+			opacity: 1;
+		}
+
+		@keyframes float {
+			0% {
+				transform: translate(-50%, -50%) scale(1);
+				opacity: 1;
+			}
+
+			100% {
+				transform: translate(-50%, -150%) scale(0.5);
+				opacity: 0;
+			}
+		}
+	</style>
+
+	<script>
+		document.addEventListener('click', function (e) {
+			const heart = document.createElement('div');
+			heart.className = 'heart';
+			heart.innerHTML = '⭐';
+			heart.style.left = e.pageX + 'px';
+			heart.style.top = e.pageY + 'px';
+			document.body.appendChild(heart);
+
+			setTimeout(() => {
+				heart.remove();
+			}, 2000);
+		});
+	</script>
+</body>
+
 </html>
