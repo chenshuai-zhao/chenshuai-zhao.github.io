@@ -796,6 +796,209 @@ function base64ToArrayBuffer(base64) {
 
 // BCrypt加密工具函数
 
+// 计算器工具函数
+// 变量用于存储计算器状态
+let calculatorExpression = '';
+let calculatorResult = '';
+let calculatorNewOperation = true;
+
+// 清空计算器
+function calculatorClear() {
+    calculatorExpression = '';
+    calculatorResult = '';
+    calculatorNewOperation = true;
+    document.getElementById('calculator-display').value = '0';
+}
+
+// 输入数字
+function calculatorNumber(num) {
+    if (calculatorNewOperation) {
+        // 如果是新的操作，清空当前显示
+        calculatorExpression = '';
+        calculatorNewOperation = false;
+        document.getElementById('calculator-display').value = num.toString();
+    } else {
+        // 否则追加到当前显示
+        const currentDisplay = document.getElementById('calculator-display').value;
+        if (currentDisplay === '0') {
+            // 如果当前显示是0，直接替换
+            document.getElementById('calculator-display').value = num.toString();
+        } else {
+            // 否则追加
+            document.getElementById('calculator-display').value += num.toString();
+        }
+    }
+    calculatorExpression = document.getElementById('calculator-display').value;
+}
+
+// 输入小数点
+function calculatorDecimal() {
+    if (calculatorNewOperation) {
+        // 如果是新的操作，开始一个新的小数
+        calculatorExpression = '0.';
+        calculatorNewOperation = false;
+        document.getElementById('calculator-display').value = '0.';
+    } else {
+        const currentDisplay = document.getElementById('calculator-display').value;
+        // 检查当前显示是否已经包含小数点
+        if (!currentDisplay.includes('.')) {
+            document.getElementById('calculator-display').value += '.';
+            calculatorExpression = document.getElementById('calculator-display').value;
+        }
+    }
+}
+
+// 输入运算符
+function calculatorOperator(op) {
+    const currentDisplay = document.getElementById('calculator-display').value;
+    
+    // 处理平方运算符特殊情况
+    if (op === '^') {
+        try {
+            const num = parseFloat(currentDisplay);
+            const result = num * num;
+            document.getElementById('calculator-display').value = result;
+            calculatorExpression = result.toString();
+            calculatorNewOperation = true;
+        } catch (error) {
+            document.getElementById('calculator-display').value = '错误';
+        }
+        return;
+    }
+    
+    if (calculatorNewOperation && calculatorResult !== '') {
+        // 如果是新的操作且有之前的结果，使用之前的结果作为新操作的第一个数
+        calculatorExpression = calculatorResult + op;
+        document.getElementById('calculator-display').value = calculatorResult + op;
+        calculatorNewOperation = false;
+    } else {
+        // 否则追加运算符到表达式
+        calculatorExpression = currentDisplay + op;
+        document.getElementById('calculator-display').value = calculatorExpression;
+        calculatorNewOperation = false;
+    }
+}
+
+// 输入函数
+function calculatorFunction(func) {
+    const currentDisplay = document.getElementById('calculator-display').value;
+    let result = '';
+    
+    try {
+        switch (func) {
+            case 'sin':
+                result = Math.sin(parseFloat(currentDisplay) * Math.PI / 180); // 假设输入的是角度
+                break;
+            case 'cos':
+                result = Math.cos(parseFloat(currentDisplay) * Math.PI / 180); // 假设输入的是角度
+                break;
+            case 'tan':
+                result = Math.tan(parseFloat(currentDisplay) * Math.PI / 180); // 假设输入的是角度
+                break;
+            case 'sqrt':
+                result = Math.sqrt(parseFloat(currentDisplay));
+                break;
+            case 'log10':
+                result = Math.log10(parseFloat(currentDisplay));
+                break;
+            case 'ln':
+                result = Math.log(parseFloat(currentDisplay));
+                break;
+            case 'π':
+                result = Math.PI;
+                break;
+        }
+        
+        // 处理精度问题，保留10位小数
+        result = parseFloat(result.toFixed(10));
+        
+        document.getElementById('calculator-display').value = result;
+        calculatorExpression = result.toString();
+        calculatorResult = result.toString();
+        calculatorNewOperation = true;
+    } catch (error) {
+        document.getElementById('calculator-display').value = '错误';
+    }
+}
+
+// 计算结果
+function calculatorEquals() {
+    const expression = document.getElementById('calculator-display').value;
+    
+    try {
+        // 使用Function构造函数安全地计算表达式（注意：这不是最安全的方式，但对于简单计算器来说足够了）
+        // 替换显示的运算符为JavaScript运算符
+        const jsExpression = expression
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-');
+        
+        // 创建一个函数来计算表达式，这样可以避免eval的一些安全问题
+        const calculate = new Function('return ' + jsExpression);
+        const result = calculate();
+        
+        // 处理精度问题，保留10位小数
+        const formattedResult = parseFloat(result.toFixed(10));
+        
+        document.getElementById('calculator-display').value = formattedResult;
+        calculatorResult = formattedResult.toString();
+        calculatorNewOperation = true;
+    } catch (error) {
+        document.getElementById('calculator-display').value = '错误';
+    }
+}
+
+// 复制结果到剪贴板
+function calculatorCopyResult() {
+    const display = document.getElementById('calculator-display');
+    
+    // 创建一个临时输入元素
+    const tempInput = document.createElement('input');
+    tempInput.value = display.value;
+    document.body.appendChild(tempInput);
+    
+    // 选择并复制
+    tempInput.select();
+    document.execCommand('copy');
+    
+    // 移除临时元素
+    document.body.removeChild(tempInput);
+    
+    // 显示复制成功提示
+    const originalText = document.querySelector('button[onclick="calculatorCopyResult()"]').textContent;
+    document.querySelector('button[onclick="calculatorCopyResult()"]').textContent = '已复制!';
+    setTimeout(() => {
+        document.querySelector('button[onclick="calculatorCopyResult()"]').textContent = originalText;
+    }, 2000);
+}
+
+// 切换高级模式显示
+function calculatorToggleScientific() {
+    const scientificFunctions = document.getElementById('scientific-functions');
+    const toggleButton = document.querySelector('button[onclick="calculatorToggleScientific()"]');
+    
+    if (scientificFunctions.style.display === 'none') {
+        scientificFunctions.style.display = 'block';
+        toggleButton.textContent = '基本模式';
+    } else {
+        scientificFunctions.style.display = 'none';
+        toggleButton.textContent = '高级模式';
+    }
+}
+
+// 初始化计算器
+function initCalculator() {
+    calculatorClear();
+}
+
+// 当DOM加载完成时初始化计算器
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCalculator);
+} else {
+    // DOM已经加载完成，直接初始化
+    initCalculator();
+}
+
 // 初始化BCrypt工具
 function initBcryptTool() {
     // 可以在这里设置默认值或进行其他初始化操作
@@ -1022,4 +1225,204 @@ function toConstantCase() {
 function clearNaming() {
     document.getElementById('naming-input').value = '';
     document.getElementById('naming-output').value = '';
+}
+
+// 正则表达式测试工具
+
+// 测试正则表达式匹配
+function testRegex() {
+    const patternStr = document.getElementById('regex-pattern').value;
+    const flags = document.getElementById('regex-flags').value;
+    const testText = document.getElementById('regex-text').value;
+    
+    // 隐藏之前的错误信息
+    document.getElementById('regex-error').style.display = 'none';
+    
+    try {
+        // 创建正则表达式对象
+        const regex = new RegExp(patternStr, flags);
+        
+        // 测试匹配
+        const matches = [];
+        let match;
+        
+        if (flags.includes('g')) {
+            // 全局匹配
+            while ((match = regex.exec(testText)) !== null) {
+                matches.push({
+                    match: match[0],
+                    index: match.index,
+                    groups: match.groups || {}
+                });
+                
+                // 防止零宽度匹配导致的无限循环
+                if (match.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+            }
+        } else {
+            // 单次匹配
+            match = regex.exec(testText);
+            if (match) {
+                matches.push({
+                    match: match[0],
+                    index: match.index,
+                    groups: match.groups || {}
+                });
+            }
+        }
+        
+        // 显示匹配结果
+        displayRegexResults(matches, testText);
+        
+        // 高亮显示匹配
+        highlightRegexMatches(testText, matches);
+        
+    } catch (error) {
+        // 显示错误信息
+        const errorElement = document.getElementById('regex-error');
+        errorElement.textContent = '正则表达式错误: ' + error.message;
+        errorElement.style.display = 'block';
+        
+        // 清空结果区域
+        document.getElementById('regex-results').value = '';
+        document.getElementById('regex-highlight').innerHTML = '';
+    }
+}
+
+// 显示正则表达式匹配结果
+function displayRegexResults(matches, testText) {
+    const resultsElement = document.getElementById('regex-results');
+    
+    if (matches.length === 0) {
+        resultsElement.value = '未找到匹配项';
+        return;
+    }
+    
+    let results = `找到 ${matches.length} 个匹配项\n\n`;
+    
+    matches.forEach((match, index) => {
+        results += `匹配项 ${index + 1}: "${match.match}"\n`;
+        results += `  位置: ${match.index}\n`;
+        results += `  长度: ${match.match.length}\n`;
+        
+        // 如果有捕获组
+        if (Object.keys(match.groups).length > 0) {
+            results += `  捕获组:\n`;
+            Object.entries(match.groups).forEach(([key, value]) => {
+                results += `    ${key}: "${value || ''}"\n`;
+            });
+        }
+        
+        results += '\n';
+    });
+    
+    // 添加总体信息
+    results += `测试文本长度: ${testText.length} 字符\n`;
+    
+    resultsElement.value = results;
+}
+
+// 高亮显示正则表达式匹配
+function highlightRegexMatches(text, matches) {
+    const highlightElement = document.getElementById('regex-highlight');
+    
+    if (matches.length === 0) {
+        // 没有匹配项，显示原始文本
+        highlightElement.textContent = text;
+        return;
+    }
+    
+    // 按索引排序匹配项
+    const sortedMatches = [...matches].sort((a, b) => a.index - b.index);
+    
+    let highlightedHTML = '';
+    let lastIndex = 0;
+    
+    // 遍历匹配项并构建高亮HTML
+    sortedMatches.forEach((match, index) => {
+        // 添加匹配项前的文本
+        if (match.index > lastIndex) {
+            highlightedHTML += escapeHTML(text.substring(lastIndex, match.index));
+        }
+        
+        // 添加高亮的匹配项
+        highlightedHTML += `<span class="bg-yellow-200 px-1 rounded font-semibold" title="匹配项 ${index + 1}: 位置 ${match.index}">`;
+        highlightedHTML += escapeHTML(match.match);
+        highlightedHTML += '</span>';
+        
+        lastIndex = match.index + match.match.length;
+    });
+    
+    // 添加最后一个匹配项后的文本
+    if (lastIndex < text.length) {
+        highlightedHTML += escapeHTML(text.substring(lastIndex));
+    }
+    
+    highlightElement.innerHTML = highlightedHTML;
+}
+
+// HTML转义函数
+function escapeHTML(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// 清空正则表达式工具
+function clearRegex() {
+    document.getElementById('regex-pattern').value = '';
+    document.getElementById('regex-flags').value = 'g';
+    document.getElementById('regex-text').value = '';
+    document.getElementById('regex-results').value = '';
+    document.getElementById('regex-highlight').innerHTML = '';
+    document.getElementById('regex-error').style.display = 'none';
+}
+
+// 显示正则表达式帮助
+function showRegexHelp() {
+    const helpContent = `
+正则表达式语法帮助：
+
+字符类：
+. - 匹配任意字符（除换行符）
+\w - 匹配字母、数字或下划线
+\d - 匹配数字
+\s - 匹配空白字符
+\b - 匹配单词边界
+[^...] - 匹配不在括号内的任意字符
+
+量词：
+* - 匹配前面的元素零次或多次
++ - 匹配前面的元素一次或多次
+? - 匹配前面的元素零次或一次
+{n} - 匹配前面的元素恰好n次
+{n,} - 匹配前面的元素至少n次
+{n,m} - 匹配前面的元素n到m次
+
+分组：
+() - 捕获组
+(?:) - 非捕获组
+(?<name>) - 命名捕获组
+
+锚点：
+^ - 匹配字符串开头
+$ - 匹配字符串结尾
+
+特殊字符需要转义：\ ^ $ . | ? * + ( ) [ ] { }
+
+标志说明：
+g - 全局匹配
+  - 查找所有匹配项而不是在找到第一个匹配后停止
+i - 忽略大小写
+  - 匹配时不区分大小写
+m - 多行模式
+  - ^ 和 $ 匹配每行的开头和结尾
+s - 单行模式
+  - . 可以匹配换行符
+u - Unicode模式
+  - 正确处理Unicode字符
+`;
+    
+    alert(helpContent);
 }
