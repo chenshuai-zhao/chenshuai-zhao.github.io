@@ -120,11 +120,6 @@
 					命名转换</button>
 			</li>
 			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="pills-regex-tab" data-toggle="pill" data-target="#pills-regex"
-					type="button" role="tab" aria-controls="pills-regex" aria-selected="false">
-					正则表达式测试</button>
-			</li>
-			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="pills-calculator-tab" data-toggle="pill" data-target="#pills-calculator"
 					type="button" role="tab" aria-controls="pills-calculator" aria-selected="false">
 					计算器</button>
@@ -607,56 +602,6 @@
 				</form>
 			</div>
 
-			<!-- 正则表达式测试工具 -->
-			<div class="tab-pane fade" id="pills-regex" role="tabpanel" aria-labelledby="pills-regex-tab">
-				<form class="mt-3">
-					<div class="form-group">
-						<label for="regex-pattern">正则表达式</label>
-						<div class="input-group">
-							<span class="input-group-text">/</span>
-							<input type="text" class="form-control" id="regex-pattern" placeholder="正则表达式模式" value="\w+">
-							<span class="input-group-text">/</span>
-							<input type="text" class="form-control" id="regex-flags" placeholder="标志" value="g" maxlength="5">
-							<div class="input-group-append">
-								<button type="button" class="btn btn-secondary" onclick="showRegexHelp()">帮助</button>
-							</div>
-						</div>
-						<small class="form-text text-muted mt-1">常用标志：g(全局匹配), i(忽略大小写), m(多行模式), s(单行模式), u(Unicode)</small>
-					</div>
-					
-					<div class="form-group">
-						<label for="regex-text">测试文本</label>
-						<textarea class="form-control" id="regex-text" rows="5" placeholder="请输入要测试的文本">Hello World! This is a test string with 123 numbers and some special chars: !@#$%.
-This is the second line of text.</textarea>
-					</div>
-					
-					<div class="form-group">
-						<div class="btn-group mr-2">
-							<button type="button" class="btn btn-primary" onclick="testRegex()">测试匹配</button>
-							<button type="button" class="btn btn-secondary" onclick="clearRegex()">清空</button>
-						</div>
-					</div>
-					
-					<div class="form-group">
-						<label for="regex-results">匹配结果</label>
-						<div class="input-group">
-							<textarea class="form-control" id="regex-results" rows="4" placeholder="匹配结果将显示在这里" readonly></textarea>
-							<div class="input-group-append">
-								<button type="button" class="btn btn-success" onclick="copyToClipboard('regex-results')">复制</button>
-							</div>
-						</div>
-					</div>
-					
-					<div class="form-group">
-						<label for="regex-highlight">高亮显示</label>
-						<div id="regex-highlight" class="bg-light p-3 rounded border" style="min-height: 100px; white-space: pre-wrap; word-break: break-word;"></div>
-					</div>
-					
-					<div id="regex-error" class="mt-2 alert alert-danger" style="display: none;">
-						错误信息将显示在这里
-					</div>
-				</form>
-			</div>
 
 			<!-- Hex编码转换工具 -->
 			<div class="tab-pane fade" id="pills-hex" role="tabpanel" aria-labelledby="pills-hex-tab">
