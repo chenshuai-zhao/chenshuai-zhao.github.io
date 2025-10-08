@@ -105,6 +105,11 @@
 					AES加密解密</button>
 			</li>
 			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-sm4-tab" data-toggle="pill" data-target="#pills-sm4" type="button"
+					role="tab" aria-controls="pills-sm4" aria-selected="false">
+					国密4加密解密</button>
+			</li>
+			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="pills-bcrypt-tab" data-toggle="pill" data-target="#pills-bcrypt" type="button"
 					role="tab" aria-controls="pills-bcrypt" aria-selected="false">
 					BCrypt加密</button>
@@ -123,6 +128,11 @@
 				<button class="nav-link" id="pills-calculator-tab" data-toggle="pill" data-target="#pills-calculator"
 					type="button" role="tab" aria-controls="pills-calculator" aria-selected="false">
 					计算器</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-hex-tab" data-toggle="pill" data-target="#pills-hex" type="button"
+					role="tab" aria-controls="pills-hex" aria-selected="false">
+					Hex编码转换</button>
 			</li>
 			</ul>
 		</div>
@@ -476,6 +486,48 @@
 				</form>
 			</div>
 
+			<!-- 国密4加密解密工具 -->
+			<div class="tab-pane fade" id="pills-sm4" role="tabpanel" aria-labelledby="pills-sm4-tab">
+				<form class="mt-3">
+					<div class="form-group">
+						<label for="sm4-key">密钥（16位字符）</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="sm4-key" placeholder="请输入16位密钥" value="SM4-Key-16Bytes!">
+							<div class="input-group-append">
+								<button type="button" class="btn btn-secondary" onclick="generateRandomSM4Key()">生成随机密钥</button>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="sm4-input">输入内容</label>
+						<textarea class="form-control" id="sm4-input" rows="4" placeholder="请输入要加密或解密的内容"></textarea>
+					</div>
+					
+					<div class="form-group">
+						<div class="btn-group mr-2">
+							<button type="button" class="btn btn-primary" onclick="encryptSM4()">加密</button>
+							<button type="button" class="btn btn-secondary" onclick="decryptSM4()">解密</button>
+							<button type="button" class="btn btn-danger" onclick="clearSM4()">清空</button>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="sm4-output">输出结果</label>
+						<div class="input-group">
+							<textarea class="form-control" id="sm4-output" rows="4" placeholder="加密或解密后的结果将显示在这里" readonly></textarea>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-success" onclick="copyToClipboard('sm4-output')">复制</button>
+							</div>
+						</div>
+					</div>
+					
+					<div id="sm4-error" class="mt-2 alert alert-danger" style="display: none;">
+						错误信息将显示在这里
+					</div>
+				</form>
+			</div>
+
 			<!-- BCrypt加密工具内容 -->
 			<div class="tab-pane fade" id="pills-bcrypt" role="tabpanel" aria-labelledby="pills-bcrypt-tab">
 				<form>
@@ -603,6 +655,36 @@ This is the second line of text.</textarea>
 					<div id="regex-error" class="mt-2 alert alert-danger" style="display: none;">
 						错误信息将显示在这里
 					</div>
+				</form>
+			</div>
+
+			<!-- Hex编码转换工具 -->
+			<div class="tab-pane fade" id="pills-hex" role="tabpanel" aria-labelledby="pills-hex-tab">
+				<form class="mt-3">
+					<div class="form-group">
+						<label for="hex-input">输入内容</label>
+						<textarea class="form-control" id="hex-input" rows="4" placeholder="请输入要转换的内容"></textarea>
+					</div>
+					
+					<div class="form-group">
+						<div class="btn-group mr-2">
+							<button type="button" class="btn btn-primary" onclick="stringToHex()">字符串转Hex</button>
+							<button type="button" class="btn btn-secondary" onclick="hexToString()">Hex转字符串</button>
+							<button type="button" class="btn btn-danger" onclick="clearHex()">清空</button>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="hex-output">输出结果</label>
+						<div class="input-group">
+							<textarea class="form-control" id="hex-output" rows="4" placeholder="转换后的结果将显示在这里" readonly></textarea>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-success" onclick="copyToClipboard('hex-output')">复制</button>
+							</div>
+						</div>
+					</div>
+					
+					<div id="hex-error" class="mt-2 alert alert-danger" style="display: none;"></div>
 				</form>
 			</div>
 

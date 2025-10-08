@@ -352,6 +352,8 @@ if (document.readyState === 'loading') {
         initJWT();
         initAESTool();
         initBcryptTool();
+        initSM4Tool();
+        initHexTool();
     });
 } else {
     // DOM已经加载完成，直接初始化
@@ -360,6 +362,8 @@ if (document.readyState === 'loading') {
     initJWT();
     initAESTool();
     initBcryptTool();
+    initSM4Tool();
+    initHexTool();
 }
 
 // 随机密码生成工具函数
@@ -792,6 +796,449 @@ function base64ToArrayBuffer(base64) {
         bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+}
+
+// Hex编码转换工具函数
+
+// 初始化Hex工具
+function initHexTool() {
+    // 工具初始化代码，如果需要的话
+}
+
+// 显示Hex错误信息
+function showHexMessage(message, isError = true) {
+    const errorElement = document.getElementById('hex-error');
+    errorElement.textContent = message;
+    errorElement.className = isError ? 'mt-2 alert alert-danger' : 'mt-2 alert alert-success';
+    errorElement.style.display = 'block';
+    
+    // 3秒后自动隐藏成功信息
+    if (!isError) {
+        setTimeout(() => {
+            errorElement.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// 清空Hex输入和输出
+function clearHex() {
+    document.getElementById('hex-input').value = '';
+    document.getElementById('hex-output').value = '';
+    document.getElementById('hex-error').style.display = 'none';
+}
+
+// 字符串转Hex
+function stringToHex() {
+    // 隐藏之前的错误信息
+    document.getElementById('hex-error').style.display = 'none';
+    
+    // 获取输入
+    const content = document.getElementById('hex-input').value.trim();
+    
+    // 验证输入
+    if (!content) {
+        showHexMessage('请输入要转换的内容！');
+        return;
+    }
+    
+    try {
+        let hexString = '';
+        for (let i = 0; i < content.length; i++) {
+            const hex = content.charCodeAt(i).toString(16);
+            hexString += ('00' + hex).slice(-2);
+        }
+        
+        // 显示转换结果
+        document.getElementById('hex-output').value = hexString.toUpperCase();
+        showHexMessage('字符串转Hex成功！', false);
+    } catch (error) {
+        showHexMessage('字符串转Hex失败: ' + error.message);
+        console.error('字符串转Hex错误:', error);
+    }
+}
+
+// Hex转字符串
+function hexToString() {
+    // 隐藏之前的错误信息
+    document.getElementById('hex-error').style.display = 'none';
+    
+    // 获取输入
+    let content = document.getElementById('hex-input').value.trim();
+    
+    // 验证输入
+    if (!content) {
+        showHexMessage('请输入要转换的Hex内容！');
+        return;
+    }
+    
+    // 移除空格和换行
+    content = content.replace(/\s+/g, '');
+    
+    // 验证Hex格式
+    if (!/^[0-9A-Fa-f]+$/.test(content)) {
+        showHexMessage('无效的Hex格式！只允许0-9和A-F/a-f字符。');
+        return;
+    }
+    
+    // 验证Hex长度是否为偶数
+    if (content.length % 2 !== 0) {
+        showHexMessage('无效的Hex格式！长度必须为偶数。');
+        return;
+    }
+    
+    try {
+        let result = '';
+        for (let i = 0; i < content.length; i += 2) {
+            const hex = content.substr(i, 2);
+            result += String.fromCharCode(parseInt(hex, 16));
+        }
+        
+        // 显示转换结果
+        document.getElementById('hex-output').value = result;
+        showHexMessage('Hex转字符串成功！', false);
+    } catch (error) {
+        showHexMessage('Hex转字符串失败: ' + error.message);
+        console.error('Hex转字符串错误:', error);
+    }
+}
+
+// 国密4(SM4)加密解密工具函数
+
+// 初始化SM4工具
+function initSM4Tool() {
+    // 设置默认密钥
+    document.getElementById('sm4-key').value = 'SM4-Key-16Bytes!';
+}
+
+// 生成随机16位SM4密钥
+function generateRandomSM4Key() {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=';
+    let key = '';
+    for (let i = 0; i < 16; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        key += charset.charAt(randomIndex);
+    }
+    document.getElementById('sm4-key').value = key;
+}
+
+// 显示SM4错误信息
+function showSM4Message(message, isError = true) {
+    const errorElement = document.getElementById('sm4-error');
+    errorElement.textContent = message;
+    errorElement.className = isError ? 'mt-2 alert alert-danger' : 'mt-2 alert alert-success';
+    errorElement.style.display = 'block';
+    
+    // 3秒后自动隐藏成功信息
+    if (!isError) {
+        setTimeout(() => {
+            errorElement.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// 清空SM4输入和输出
+function clearSM4() {
+    document.getElementById('sm4-input').value = '';
+    document.getElementById('sm4-output').value = '';
+    document.getElementById('sm4-error').style.display = 'none';
+}
+
+// 加密SM4
+async function encryptSM4() {
+    // 隐藏之前的错误信息
+    document.getElementById('sm4-error').style.display = 'none';
+    
+    // 获取输入
+    const key = document.getElementById('sm4-key').value.trim();
+    const content = document.getElementById('sm4-input').value.trim();
+    
+    // 验证输入
+    if (!key || key.length !== 16) {
+        showSM4Message('请输入16位密钥！');
+        return;
+    }
+    
+    if (!content) {
+        showSM4Message('请输入要加密的内容！');
+        return;
+    }
+    
+    try {
+        // 使用SM4算法加密
+        const encrypted = sm4Encrypt(content, key);
+        
+        // 显示加密结果
+        document.getElementById('sm4-output').value = encrypted;
+        showSM4Message('加密成功！', false);
+    } catch (error) {
+        showSM4Message('加密失败: ' + error.message);
+        console.error('SM4加密错误:', error);
+    }
+}
+
+// 解密SM4
+async function decryptSM4() {
+    // 隐藏之前的错误信息
+    document.getElementById('sm4-error').style.display = 'none';
+    
+    // 获取输入
+    const key = document.getElementById('sm4-key').value.trim();
+    const encryptedContent = document.getElementById('sm4-input').value.trim();
+    
+    // 验证输入
+    if (!key || key.length !== 16) {
+        showSM4Message('请输入16位密钥！');
+        return;
+    }
+    
+    if (!encryptedContent) {
+        showSM4Message('请输入要解密的内容！');
+        return;
+    }
+    
+    try {
+        // 使用SM4算法解密
+        const decrypted = sm4Decrypt(encryptedContent, key);
+        
+        // 显示解密结果
+        document.getElementById('sm4-output').value = decrypted;
+        showSM4Message('解密成功！', false);
+    } catch (error) {
+        showSM4Message('解密失败: ' + error.message);
+        console.error('SM4解密错误:', error);
+    }
+}
+
+// SM4算法实现
+class SM4 {
+    constructor() {
+        this.SBOX = [
+            0xd6, 0x90, 0xe9, 0xfe, 0xcc, 0xe1, 0x3d, 0xb7, 0x16, 0xb6, 0x14, 0xc2, 0x28, 0xfb, 0x2c, 0x05,
+            0x2b, 0x67, 0x9a, 0x76, 0x2a, 0xbe, 0x04, 0xc3, 0xaa, 0x44, 0x13, 0x26, 0x49, 0x86, 0x06, 0x99,
+            0x9c, 0x42, 0x50, 0xf4, 0x91, 0xef, 0x98, 0x7a, 0x33, 0x54, 0x0b, 0x43, 0xed, 0xcf, 0xac, 0x62,
+            0xe4, 0xb3, 0x1c, 0xa9, 0xc9, 0x08, 0xe8, 0x95, 0x80, 0xdf, 0x94, 0xfa, 0x75, 0x8f, 0x3f, 0xa6,
+            0x47, 0x07, 0xa7, 0xfc, 0xf3, 0x73, 0x17, 0xba, 0x83, 0x59, 0x3c, 0x19, 0xe6, 0x85, 0x4f, 0xa8,
+            0x68, 0x6b, 0x81, 0xb2, 0x71, 0x64, 0xda, 0x8b, 0xf8, 0xeb, 0x0f, 0x4b, 0x70, 0x56, 0x9d, 0x35,
+            0x1e, 0x24, 0x0e, 0x5e, 0x63, 0x58, 0xd1, 0xa2, 0x25, 0x22, 0x7c, 0x3b, 0x01, 0x21, 0x78, 0x87,
+            0xd4, 0x00, 0x46, 0x57, 0x9f, 0xd3, 0x27, 0x52, 0x4c, 0x36, 0x02, 0xe7, 0xa0, 0xc4, 0xc8, 0x9e,
+            0xea, 0xbf, 0x8a, 0xd2, 0x40, 0xc7, 0x38, 0xb5, 0xa3, 0xf7, 0xf2, 0xce, 0xf9, 0x61, 0x15, 0xa1,
+            0xe0, 0xae, 0x5d, 0xa4, 0x9b, 0x34, 0x1a, 0x55, 0xad, 0x93, 0x32, 0x30, 0xf5, 0x8c, 0xb1, 0xe3,
+            0x1d, 0xf6, 0xe2, 0x2e, 0x82, 0x66, 0xca, 0x60, 0xc0, 0x29, 0x23, 0xab, 0x0d, 0x53, 0x4e, 0x6f,
+            0xd5, 0xdb, 0x37, 0x45, 0xde, 0xfd, 0x8e, 0x2f, 0x03, 0xff, 0x6a, 0x72, 0x6d, 0x6c, 0x5b, 0x51,
+            0x8d, 0x1b, 0xaf, 0x92, 0xbb, 0xdd, 0xbc, 0x7f, 0x11, 0xd9, 0x5c, 0x41, 0x1f, 0x10, 0x5a, 0xd8,
+            0x0a, 0xc1, 0x31, 0x88, 0xa5, 0xcd, 0x7b, 0xbd, 0x2d, 0x74, 0xd0, 0x12, 0xb8, 0xe5, 0xb4, 0xb0,
+            0x89, 0x69, 0x97, 0x4a, 0x0c, 0x96, 0x77, 0x7e, 0x65, 0xb9, 0xf1, 0x09, 0xc5, 0x6e, 0xc6, 0x84,
+            0x18, 0xf0, 0x7d, 0xec, 0x3a, 0xdc, 0x4d, 0x20, 0x79, 0xee, 0x5f, 0x3e, 0xd7, 0xcb, 0x39, 0x48
+        ];
+        
+        this.FK = [0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc];
+        this.CK = [
+            0x00070e15, 0x1c232a31, 0x383f464d, 0x545b6269,
+            0x70777e85, 0x8c939aa1, 0xa8afb6bd, 0xc4cbd2d9,
+            0xe0e7eef5, 0xfc030a11, 0x181f262d, 0x343b4249,
+            0x50575e65, 0x6c737a81, 0x888f969d, 0xa4abb2b9,
+            0xc0c7ced5, 0xdce3eaf1, 0xf8ff060d, 0x141b2229,
+            0x30373e45, 0x4c535a61, 0x686f767d, 0x848b9299,
+            0xa0a7aeb5, 0xbcc3cad1, 0xd8dfe6ed, 0xf4fb0209,
+            0x10171e25, 0x2c333a41, 0x484f565d, 0x646b7279
+        ];
+    }
+    
+    // 密钥扩展
+    expandKey(key) {
+        const MK = new Array(4);
+        for (let i = 0; i < 4; i++) {
+            MK[i] = ((key[i * 4] & 0xff) << 24) |
+                   ((key[i * 4 + 1] & 0xff) << 16) |
+                   ((key[i * 4 + 2] & 0xff) << 8) |
+                   (key[i * 4 + 3] & 0xff);
+        }
+        
+        const rk = new Array(32);
+        let K = new Array(4);
+        
+        for (let i = 0; i < 4; i++) {
+            K[i] = MK[i] ^ this.FK[i];
+        }
+        
+        for (let i = 0; i < 32; i++) {
+            let tmp = K[1] ^ this.T1(K[2] ^ K[3] ^ this.CK[i]);
+            rk[i] = K[0] ^ tmp;
+            
+            K[0] = K[1];
+            K[1] = K[2];
+            K[2] = K[3];
+            K[3] = rk[i];
+        }
+        
+        return rk;
+    }
+    
+    // T函数
+    T1(X) {
+        let x = this.L(this.S(X));
+        return x;
+    }
+    
+    T2(X) {
+        let x = this.L1(this.S(X));
+        return x;
+    }
+    
+    // 非线性变换S
+    S(X) {
+        let x = 0;
+        x |= (this.SBOX[(X >> 24) & 0xff]) << 24;
+        x |= (this.SBOX[(X >> 16) & 0xff]) << 16;
+        x |= (this.SBOX[(X >> 8) & 0xff]) << 8;
+        x |= (this.SBOX[X & 0xff]);
+        return x;
+    }
+    
+    // 线性变换L
+    L(X) {
+        return X ^ this.rotl(X, 2) ^ this.rotl(X, 10) ^ this.rotl(X, 18) ^ this.rotl(X, 24);
+    }
+    
+    // 线性变换L1
+    L1(X) {
+        return X ^ this.rotl(X, 13) ^ this.rotl(X, 23);
+    }
+    
+    // 循环左移
+    rotl(X, n) {
+        return ((X << n) & 0xffffffff) | (X >>> (32 - n));
+    }
+    
+    // 加密
+    encrypt(data, key) {
+        const rk = this.expandKey(key);
+        
+        const X = new Array(4);
+        for (let i = 0; i < 4; i++) {
+            X[i] = ((data[i * 4] & 0xff) << 24) |
+                   ((data[i * 4 + 1] & 0xff) << 16) |
+                   ((data[i * 4 + 2] & 0xff) << 8) |
+                   (data[i * 4 + 3] & 0xff);
+        }
+        
+        let tmp;
+        for (let i = 0; i < 32; i++) {
+            tmp = X[1] ^ X[2] ^ X[3] ^ rk[i];
+            tmp = this.T1(tmp);
+            tmp = X[0] ^ tmp;
+            
+            X[0] = X[1];
+            X[1] = X[2];
+            X[2] = X[3];
+            X[3] = tmp;
+        }
+        
+        // 逆序
+        const result = new Array(16);
+        for (let i = 0; i < 4; i++) {
+            result[i * 4] = (X[3 - i] >> 24) & 0xff;
+            result[i * 4 + 1] = (X[3 - i] >> 16) & 0xff;
+            result[i * 4 + 2] = (X[3 - i] >> 8) & 0xff;
+            result[i * 4 + 3] = X[3 - i] & 0xff;
+        }
+        
+        return result;
+    }
+    
+    // 解密
+    decrypt(data, key) {
+        const rk = this.expandKey(key);
+        
+        const X = new Array(4);
+        for (let i = 0; i < 4; i++) {
+            X[i] = ((data[i * 4] & 0xff) << 24) |
+                   ((data[i * 4 + 1] & 0xff) << 16) |
+                   ((data[i * 4 + 2] & 0xff) << 8) |
+                   (data[i * 4 + 3] & 0xff);
+        }
+        
+        let tmp;
+        for (let i = 31; i >= 0; i--) {
+            tmp = X[1] ^ X[2] ^ X[3] ^ rk[i];
+            tmp = this.T1(tmp);
+            tmp = X[0] ^ tmp;
+            
+            X[0] = X[1];
+            X[1] = X[2];
+            X[2] = X[3];
+            X[3] = tmp;
+        }
+        
+        // 逆序
+        const result = new Array(16);
+        for (let i = 0; i < 4; i++) {
+            result[i * 4] = (X[3 - i] >> 24) & 0xff;
+            result[i * 4 + 1] = (X[3 - i] >> 16) & 0xff;
+            result[i * 4 + 2] = (X[3 - i] >> 8) & 0xff;
+            result[i * 4 + 3] = X[3 - i] & 0xff;
+        }
+        
+        return result;
+    }
+}
+
+// SM4加密核心函数
+function sm4Encrypt(content, key) {
+    // 创建SM4实例
+    const sm4 = new SM4();
+    
+    // 将密钥转换为字节数组
+    const keyBytes = new TextEncoder().encode(key);
+    
+    // 对内容进行填充，使其长度为16的倍数
+    const contentBytes = new TextEncoder().encode(content);
+    const paddingLength = 16 - (contentBytes.length % 16);
+    const paddedBytes = new Uint8Array(contentBytes.length + paddingLength);
+    paddedBytes.set(contentBytes);
+    
+    // 添加PKCS#7填充
+    for (let i = contentBytes.length; i < paddedBytes.length; i++) {
+        paddedBytes[i] = paddingLength;
+    }
+    
+    // 分块加密
+    const encryptedBytes = new Uint8Array(paddedBytes.length);
+    for (let i = 0; i < paddedBytes.length; i += 16) {
+        const block = paddedBytes.slice(i, i + 16);
+        const encryptedBlock = sm4.encrypt(block, keyBytes);
+        encryptedBytes.set(encryptedBlock, i);
+    }
+    
+    // 将加密结果转换为Base64字符串
+    return arrayBufferToBase64(encryptedBytes.buffer);
+}
+
+// SM4解密核心函数
+function sm4Decrypt(encryptedContent, key) {
+    // 创建SM4实例
+    const sm4 = new SM4();
+    
+    // 将密钥转换为字节数组
+    const keyBytes = new TextEncoder().encode(key);
+    
+    // 将Base64字符串转换为字节数组
+    const encryptedBytes = new Uint8Array(base64ToArrayBuffer(encryptedContent));
+    
+    // 分块解密
+    const decryptedBytes = new Uint8Array(encryptedBytes.length);
+    for (let i = 0; i < encryptedBytes.length; i += 16) {
+        const block = encryptedBytes.slice(i, i + 16);
+        const decryptedBlock = sm4.decrypt(block, keyBytes);
+        decryptedBytes.set(decryptedBlock, i);
+    }
+    
+    // 去除PKCS#7填充
+    const paddingLength = decryptedBytes[decryptedBytes.length - 1];
+    const actualBytes = decryptedBytes.slice(0, decryptedBytes.length - paddingLength);
+    
+    // 将解密结果转换为字符串
+    return new TextDecoder().decode(actualBytes);
 }
 
 // BCrypt加密工具函数
