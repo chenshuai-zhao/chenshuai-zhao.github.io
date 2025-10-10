@@ -8,6 +8,64 @@ const calculatorModule = {
     result: '',
     newOperation: true,
     
+    // 处理键盘输入
+    handleKeyPress: function(event) {
+        // 获取输入元素
+        const calculatorDisplay = document.getElementById('calculator-display');
+        
+        // 只有当计算器区域获得焦点或用户按下特定键时才处理
+        const isCalculatorActive = document.activeElement === calculatorDisplay || 
+                                 document.activeElement.closest('#calculator-container') !== null;
+        
+        // 允许在任何地方使用键盘快捷键
+        const key = event.key;
+        
+        // 阻止默认行为，防止不必要的滚动或其他操作
+        event.preventDefault();
+        
+        // 数字键
+        if (/[0-9]/.test(key)) {
+            this.calculatorNumber(parseInt(key));
+        }
+        // 小数点
+        else if (key === '.') {
+            this.calculatorDecimal();
+        }
+        // 运算符
+        else if (key === '+' || key === '-' || key === '*' || key === '/') {
+            // 转换显示的运算符
+            const displayOp = key === '*' ? '×' : (key === '/' ? '÷' : key);
+            this.calculatorOperator(key === '*' ? '×' : (key === '/' ? '÷' : key));
+        }
+        // 括号
+        else if (key === '(' || key === ')') {
+            this.calculatorOperator(key);
+        }
+        // 等号
+        else if (key === '=' || key === 'Enter') {
+            this.calculatorEquals();
+        }
+        // 清除
+        else if (key === 'Escape' || key === 'Delete') {
+            this.calculatorClear();
+        }
+        // 退格键
+        else if (key === 'Backspace') {
+            const currentDisplay = calculatorDisplay.value;
+            if (currentDisplay.length > 1) {
+                calculatorDisplay.value = currentDisplay.slice(0, -1);
+                this.expression = calculatorDisplay.value;
+            } else {
+                calculatorDisplay.value = '0';
+                this.expression = '';
+                this.newOperation = true;
+            }
+        }
+        
+        // 确保计算器输入框获得焦点
+        calculatorDisplay.focus();
+    },
+    
     // 清空计算器
     calculatorClear: function() {
         this.expression = '';
@@ -199,7 +257,26 @@ const calculatorModule = {
     initCalculator: function() {
         try {
             this.calculatorClear();
-            console.log('计算器工具初始化完成');
+            
+            // 添加键盘事件监听器
+            document.addEventListener('keydown', (event) => {
+                // 检查是否在输入框中，如果是则不处理键盘事件，避免冲突
+                if (event.target.tagName === 'INPUT' && event.target.type === 'text') {
+                    return;
+                }
+                this.handleKeyPress(event);
+            });
+            
+            // 为计算器显示框添加焦点事件，使其可以直接通过键盘输入
+            const calculatorDisplay = document.getElementById('calculator-display');
+            if (calculatorDisplay) {
+                calculatorDisplay.setAttribute('tabindex', '0');
+                calculatorDisplay.addEventListener('focus', () => {
+                    calculatorDisplay.select();
+                });
+            }
+            
+            console.log('计算器工具初始化完成，键盘输入功能已启用');
         } catch (e) {
             console.warn('计算器工具初始化失败:', e);
         }
